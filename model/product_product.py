@@ -1,4 +1,4 @@
-﻿from openerp import SUPERUSER_ID
+from openerp import SUPERUSER_ID
 from openerp import models, fields, api
 
 class product_product_brand(models.Model):
@@ -20,9 +20,9 @@ class product_product_brand(models.Model):
             code = context.get('display_default_code', True) and d.get('default_code',False) or False
             if code:
                 if brand:
-                    name = '[%s] %s - %s' % (code,brand.upper(),name)
+                    name = '%s - %s [%s]' % (brand.upper(),name,code)
                 else:
-                    name = '[%s] %s' % (code,name)
+                    name = '%s [%s]' % (name,code)
             return (d['id'], name)
 
         partner_id = context.get('partner_id', False)
@@ -37,6 +37,7 @@ class product_product_brand(models.Model):
         self.check_access_rule(cr, user, ids, "read", context=context)
 
         result = []
+                
         for product in self.browse(cr, SUPERUSER_ID, ids, context=context):
             variant = ", ".join([v.name for v in product.attribute_value_ids])
             name = variant and "%s (%s)" % (product.name, variant) or product.name
