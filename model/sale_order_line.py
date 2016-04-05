@@ -1,27 +1,29 @@
-﻿from openerp.osv import fields, osv
+from openerp import models, fields, api
+import logging
+_logger = logging.getLogger(__name__)
 
-class sale_order_line(osv.osv):
+class sale_order_line(models.Model):
     _inherit='sale.order.line'
 
-    def product_id_change(self, cr, uid, ids, pricelist, product, qty=0,
-        uom=False, qty_uos=0, uos=False, name='', partner_id=False,
-        lang=False, update_tax=True, date_order=False, packaging=False, fiscal_position=False, flag=False, context=None):
-        
-        result = super(sale_order_line, self).product_id_change(cr, uid, ids, pricelist, product, qty,
-            uom, qty_uos, uos, name, partner_id,
-            lang, update_tax, date_order, packaging, fiscal_position, flag, context)
-        
-        product_obj = self.pool.get('product.product')
-        partner_obj = self.pool.get('res.partner')
-        partner = partner_obj.browse(cr, uid, partner_id)
-        context_partner = {'lang': partner.lang, 'partner_id': partner_id}
-        product_obj = product_obj.browse(cr, uid, product, context=context_partner)
-        
-        if not flag:
-            result['value']['name'] = self.pool.get('product.product').name_get_without_reference(cr, uid, [product_obj.id], context=context_partner)[0][1]
-            if product_obj.description_sale:
-                result['value']['name'] += '\n'+product_obj.description_sale
+    @api.multi
+    @api.onchange('product_id')
+    def product_id_change(self):
+        result = super(sale_order_line, self).product_id_change()
+
+        if self.product_id:
+            _logger.debug("Product: %s", self.product_id)
+            # Get the partner in order to have the correct language
+            lang = self.order_id.partner_id.lang
+            vals = {}
+            if self.product_id.description_sale:
+                vals['name'] = self.with_context(lang=lang).product_id.description_sale
+            elif self.product_id.description:
+                vals['name'] = self.with_context(lang=lang).product_id.description
+            else:
+                vals['name'] = self.with_context(lang=lang).product_id.name
+
+            self.update(vals)
 
         return result
-
+        
 sale_order_line()
