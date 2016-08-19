@@ -1,6 +1,6 @@
 {
     "name" : "Brand on sale order lines",
-    "version" : "0.1",
+    "version" : "9.0.1.0",
     "author" : "Bernard DELHEZ, AbAKUS it-solutions SARL",
     "category": 'Sale',
     "description": """
