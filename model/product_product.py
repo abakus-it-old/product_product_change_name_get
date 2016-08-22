@@ -1,4 +1,4 @@
-from openerp import models, fields, api
+from openerp import models, api
 
 class product_product_brand(models.Model):
     _inherit = 'product.product'
@@ -7,15 +7,8 @@ class product_product_brand(models.Model):
     #It is the same method's body but it includes the brand.
     @api.multi
     def name_get(self):
-        # all user don't have access to seller and partner
-        # check access and use superuser
-        cr = self.env.cr
-        uid = self.env.uid
-        self.check_access_rights(cr, uid, "read")
-        self.check_access_rule(cr, uid, ids, "read")
-        
         result = []
-        for product in self.sudo():
+        for product in self:
             result.append((product.id, product.name_get_full()))
         return result
 
