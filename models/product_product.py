@@ -12,7 +12,7 @@ class product_product_brand(models.Model):
             result.append((product.id, product.name_get_full()))
         return result
 
-    @api.one
+    @api.model
     def name_get_full(self):
         fullName = ''
         
