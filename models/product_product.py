@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from openerp import models, api
 
 class product_product_brand(models.Model):
