@@ -20,14 +20,19 @@ class sale_order_line(models.Model):
             else:
                 product = self.product_id
             
-            #select the good description
+            name = ""
+            if product.product_brand_id:
+                name = product.product_brand_id.name + " - "
+            
+            #select the right description
             if product.description_sale:
-                vals['name'] = product.name + "\n" + product.description_sale
+                name = name + product.name + "\n" + product.description_sale
             elif product.description:
-                vals['name'] = product.name + "\n" + product.description
+                name = name + product.name + "\n" + product.description
             else:
-                vals['name'] = product.name
+                name = name + product.name
 
+            vals['name'] = name
             self.update(vals)
 
         return result
