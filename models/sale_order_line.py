@@ -22,9 +22,9 @@ class sale_order_line(models.Model):
             
             #select the good description
             if product.description_sale:
-                vals['name'] = product.description_sale
+                vals['name'] = product.name + "\n" + product.description_sale
             elif product.description:
-                vals['name'] = product.description
+                vals['name'] = product.name + "\n" + product.description
             else:
                 vals['name'] = product.name
 
